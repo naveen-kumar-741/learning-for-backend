@@ -1,0 +1,94 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  """Id of the created user object. This will be used for further API Calls"""
+  id: String!
+  userName: String
+  cognitoUserName: ID
+  emailId: String!
+  firstName: String
+  lastName: String
+  mobileNumber: Float
+  profileUrl: String
+}
+
+type Query {
+  """This API is used to get the details of the individual user"""
+  getCurrentUserData: User!
+  getAllUser: [User!]!
+
+  """This API is used to get the details of the individual users by thir ID"""
+  getUserById(
+    """Id of the user to get the details"""
+    userId: String!
+  ): User!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: String!): String!
+}
+
+input CreateUserInput {
+  """The unique username for the registering user."""
+  userName: String
+
+  """
+  We are using cognito for Authentication. Once the user is registered from the frontend application, we need to provide the cognito username to our backend API
+  """
+  cognitoUserName: ID
+
+  """The emailId of the registering user"""
+  emailId: String!
+
+  """
+  The password of the user who is trying to register. This field will be used only for the developer's user creation
+  """
+  password: String
+
+  """Give the first name of the user"""
+  firstName: String
+
+  """Give the last name of the user"""
+  lastName: String
+
+  """
+  When the user registering, the user can upload their profile images. From the frontend we need to upload the file to S3 and give the file path as an input to this field
+  """
+  profileUrl: String
+}
+
+input UpdateUserInput {
+  """The unique username for the registering user."""
+  userName: String
+
+  """
+  We are using cognito for Authentication. Once the user is registered from the frontend application, we need to provide the cognito username to our backend API
+  """
+  cognitoUserName: ID
+
+  """The emailId of the registering user"""
+  emailId: String
+
+  """
+  The password of the user who is trying to register. This field will be used only for the developer's user creation
+  """
+  password: String
+
+  """Give the first name of the user"""
+  firstName: String
+
+  """Give the last name of the user"""
+  lastName: String
+
+  """
+  When the user registering, the user can upload their profile images. From the frontend we need to upload the file to S3 and give the file path as an input to this field
+  """
+  profileUrl: String
+
+  """User Id"""
+  id: String!
+}
