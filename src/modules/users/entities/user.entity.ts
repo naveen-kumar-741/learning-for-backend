@@ -4,11 +4,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRole } from './user-role.entity';
+import { Room } from 'src/modules/rooms/entities/room.entity';
+import { Message } from 'src/modules/messages/entities/message.entity';
 
 @Entity({ name: 'users' })
 @ObjectType()
@@ -48,11 +52,24 @@ export class User {
   @Column({ nullable: true, name: 'profile_url' })
   profileUrl?: string;
 
+  @Field(() => [UserRole], { nullable: true })
   @OneToMany(() => UserRole, (role) => role.user, {
     cascade: true,
     eager: true,
   })
   userRoles: UserRole[];
+
+  @Field(() => [Message], { nullable: true })
+  @OneToMany(() => Message, (message) => message.user, {
+    cascade: true,
+    eager: true,
+  })
+  messages: Message[];
+
+  @Field(() => [Room], { nullable: true })
+  @JoinColumn({ name: 'room_id' })
+  @ManyToMany(() => Room, (room) => room.users)
+  rooms: Room[];
 
   @CreateDateColumn({
     type: 'timestamptz',

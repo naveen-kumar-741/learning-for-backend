@@ -7,6 +7,8 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { CognitoModule } from './cognito/cognito.module';
 import { AuthModule } from './auth/auth.module';
+import { UserChatModule } from './modules/user-chat/user-chat.module';
+import { RoomsModule } from './modules/rooms/rooms.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { AuthModule } from './auth/auth.module';
     DatabaseModule,
     CognitoModule,
     AuthModule,
+    UserChatModule,
+    RoomsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

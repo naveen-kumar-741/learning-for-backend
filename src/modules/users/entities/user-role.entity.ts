@@ -26,11 +26,11 @@ export class UserRole extends BaseEntity {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'u_id' })
   user: User;
 
   @Field()
-  @Column({ name: 'user_id' })
+  @Column({ name: 'u_id' })
   userId: string;
 
   @Field(() => UserTypesEnum)

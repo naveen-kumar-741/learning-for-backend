@@ -10,6 +10,7 @@ import { UserRepository } from './users.repository';
 import { UserTypesEnum } from '../common/common.enum';
 import {
   UNABLE_DELETE_USER,
+  USER_EXIST,
   USER_NOT_EXIST,
 } from 'src/utils/constants/error-constants';
 import { DELETE_SUCCESS } from 'src/utils/constants/constant';
@@ -24,6 +25,13 @@ export class UsersService {
     private readonly cognitoService: CognitoService,
   ) {}
   async createUser(createUserInput: CreateUserInput) {
+    const userData = await this.userRepo.findOne({
+      where: { emailId: createUserInput.emailId },
+    });
+    if (userData) {
+      Logger.error(`Message ----> ${USER_EXIST}`);
+      throw new NotFoundException(USER_EXIST);
+    }
     createUserInput.userRoles = [{ userType: UserTypesEnum.USER }];
     try {
       await this.cognitoService.adminConfirmSignUp(createUserInput.emailId);

@@ -2,6 +2,40 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type UserRole {
+  id: String!
+  user: User!
+  userId: String!
+  userType: UserTypesEnum!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum UserTypesEnum {
+  USER
+  SUPER_ADMIN
+  ADMIN
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Message {
+  id: String!
+  message: String!
+  user: User!
+  room: Room!
+}
+
+type Room {
+  id: String!
+  roomName: String
+  users: [User!]!
+  messages: [Message!]
+}
+
 type User {
   """Id of the created user object. This will be used for further API Calls"""
   id: String!
@@ -12,6 +46,9 @@ type User {
   lastName: String
   mobileNumber: Float
   profileUrl: String
+  userRoles: [UserRole!]
+  messages: [Message!]
+  rooms: [Room!]
 }
 
 type Query {
@@ -24,12 +61,17 @@ type Query {
     """Id of the user to get the details"""
     userId: String!
   ): User!
+  getAllRooms: [Room!]!
+  getRoomById(id: String!): Room!
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: String!): String!
+  createRoom(createRoomInput: CreateRoomInput!): Room!
+  updateRoom(updateRoomInput: UpdateRoomInput!): Room!
+  removeRoom(id: String!): String!
 }
 
 input CreateUserInput {
@@ -90,5 +132,18 @@ input UpdateUserInput {
   profileUrl: String
 
   """User Id"""
+  id: String!
+}
+
+input CreateRoomInput {
+  """The unique roomName for the registering user."""
+  roomName: String
+  users: [UpdateUserInput!]!
+}
+
+input UpdateRoomInput {
+  """The unique roomName for the registering user."""
+  roomName: String
+  users: [UpdateUserInput!]
   id: String!
 }
