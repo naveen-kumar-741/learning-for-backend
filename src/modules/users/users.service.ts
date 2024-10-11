@@ -58,6 +58,7 @@ export class UsersService {
   async getUserById(id: string) {
     const userData = await this.userRepo.findOne({
       where: { id: id },
+      relations: ['rooms'],
     });
     if (!userData) {
       Logger.error(`Message ----> ${USER_NOT_EXIST}`);

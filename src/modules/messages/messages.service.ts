@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateMessageInput } from './dto/create-message.input';
 import { UpdateMessageInput } from './dto/update-message.input';
+import { MessagesRepository } from './messages.repository';
 
 @Injectable()
 export class MessagesService {
-  create(createMessageInput: CreateMessageInput) {
-    return 'This action adds a new message';
+  constructor(private readonly messageRepo: MessagesRepository) {}
+  async createMessage(createMessageInput: CreateMessageInput) {
+    return this.messageRepo.createRecord(createMessageInput);
   }
 
-  findAll() {
-    return `This action returns all messages`;
+  async getAllMessages() {
+    return await this.messageRepo.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} message`;
+  async getMessageById(id: string) {
+    const messageData = await this.messageRepo.findOne({
+      where: { id: id },
+      relations: ['users', 'messages'],
+    });
+    if (!messageData) {
+      Logger.error(`Message ----> ${'Message not Found'}`);
+      throw new NotFoundException('Message not Found');
+    }
+    return messageData;
   }
 
-  update(id: number, updateMessageInput: UpdateMessageInput) {
-    return `This action updates a #${id} message`;
+  async updateMessage(id: string, updateMessageInput: UpdateMessageInput) {
+    const message = await this.getMessageById(id);
+    if (!message) throw new NotFoundException('Message not Found');
+    try {
+      await this.messageRepo.updateByObj(message, {
+        ...updateMessageInput,
+      });
+    } catch (e) {
+      throw new Error(e);
+    }
+    const updatedMessage = await this.getMessageById(message?.id);
+    return updatedMessage;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} message`;
+  async removeMessage(id: string) {
+    const messageData = await this.messageRepo.findById(id);
+    if (!messageData?.id) {
+      Logger.error(`Message ----> ${'Message not Found'}`);
+      throw new NotFoundException('Message not Found');
+    }
+    const deleteMessage = await this.messageRepo.delete(id);
+    if (!deleteMessage.affected) {
+      Logger.error(`Message ----> ${'UNABLE TO DELETE ROOM'}`);
+      throw new UnprocessableEntityException('UNABLE TO DELETE ROOM');
+    }
+    return 'deleted successfully';
   }
 }

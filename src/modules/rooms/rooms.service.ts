@@ -22,6 +22,7 @@ export class RoomsService {
   async getRoomById(id: string) {
     const roomData = await this.roomRepo.findOne({
       where: { id: id },
+      relations: ['users', 'messages'],
     });
     if (!roomData) {
       Logger.error(`Message ----> ${'Room not Found'}`);

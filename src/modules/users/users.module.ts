@@ -9,7 +9,7 @@ import { CognitoService } from 'src/cognito/cognito.service';
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), CognitoModule],
+  imports: [CognitoModule],
   providers: [UsersResolver, UsersService, UserRepository, CognitoService],
   exports: [UsersService, UsersResolver],
 })

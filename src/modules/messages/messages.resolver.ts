@@ -1,35 +1,45 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { MessagesService } from './messages.service';
-import { Message } from './entities/message.entity';
-import { CreateMessageInput } from './dto/create-message.input';
-import { UpdateMessageInput } from './dto/update-message.input';
+import { MessagesService } from './Messages.service';
+import { Message } from './entities/Message.entity';
+import { CreateMessageInput } from './dto/create-Message.input';
+import { UpdateMessageInput } from './dto/update-Message.input';
+import { User } from '../users/entities/user.entity';
+import { CurrentUser } from 'src/auth/decorators/currentuser.decorator';
 
 @Resolver(() => Message)
 export class MessagesResolver {
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(private readonly MessagesService: MessagesService) {}
 
   @Mutation(() => Message)
-  createMessage(@Args('createMessageInput') createMessageInput: CreateMessageInput) {
-    return this.messagesService.create(createMessageInput);
+  createMessage(
+    @CurrentUser() user: User,
+    @Args('createMessageInput') createMessageInput: CreateMessageInput,
+  ) {
+    return this.MessagesService.createMessage({ ...createMessageInput, user });
   }
 
-  @Query(() => [Message], { name: 'messages' })
-  findAll() {
-    return this.messagesService.findAll();
+  @Query(() => [Message], { name: 'getAllMessages' })
+  getAllMessages() {
+    return this.MessagesService.getAllMessages();
   }
 
-  @Query(() => Message, { name: 'message' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.messagesService.findOne(id);
-  }
-
-  @Mutation(() => Message)
-  updateMessage(@Args('updateMessageInput') updateMessageInput: UpdateMessageInput) {
-    return this.messagesService.update(updateMessageInput.id, updateMessageInput);
+  @Query(() => Message, { name: 'getMessageById' })
+  getMessageById(@Args('id', { type: () => String }) id: string) {
+    return this.MessagesService.getMessageById(id);
   }
 
   @Mutation(() => Message)
-  removeMessage(@Args('id', { type: () => Int }) id: number) {
-    return this.messagesService.remove(id);
+  updateMessage(
+    @Args('updateMessageInput') updateMessageInput: UpdateMessageInput,
+  ) {
+    return this.MessagesService.updateMessage(
+      updateMessageInput.id,
+      updateMessageInput,
+    );
+  }
+
+  @Mutation(() => String)
+  removeMessage(@Args('id', { type: () => String }) id: string) {
+    return this.MessagesService.removeMessage(id);
   }
 }
