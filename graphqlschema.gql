@@ -51,24 +51,56 @@ type User {
   rooms: [Room!]
 }
 
+type GetAllUsersResponse {
+  totalCount: Float!
+  users: [User!]!
+}
+
+type GetAllMessagesResponse {
+  totalCount: Float!
+  messages: [Message!]!
+}
+
 type Query {
   """This API is used to get the details of the individual user"""
   getCurrentUserData: User!
-  getAllUser: [User!]!
+  getAllUser(pagination: GetPaginationInput!): GetAllUsersResponse!
 
   """This API is used to get the details of the individual users by thir ID"""
   getUserById(
     """Id of the user to get the details"""
     userId: String!
   ): User!
+  getAllMessages: [Message!]!
+  getAllMessagesByRoomId(id: String!, pagination: GetPaginationInput!): GetAllMessagesResponse!
+  getMessageById(id: String!): Message!
   getAllRooms: [Room!]!
+  getAllOneOnOneRooms: [Room!]!
+  getAllGroups: [Room!]!
+
+  """Check room is already exist for one on one chat"""
+  checkRoomAlreadyExist(senderId: String!, recipientId: String!): [Room!]!
   getRoomById(id: String!): Room!
+}
+
+input GetPaginationInput {
+  """Page number of the records"""
+  pageNo: Int
+
+  """Number of records to be fetched per page"""
+  perPage: Int
+
+  """Search term incase we need to search by term"""
+  searchParam: String
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: String!): String!
+  createMessage(createMessageInput: CreateMessageInput!): Message!
+  updateMessage(updateMessageInput: UpdateMessageInput!): Message!
+  removeMessage(id: String!): String!
   createRoom(createRoomInput: CreateRoomInput!): Room!
   updateRoom(updateRoomInput: UpdateRoomInput!): Room!
   removeRoom(id: String!): String!
@@ -130,15 +162,14 @@ input UpdateUserInput {
   When the user registering, the user can upload their profile images. From the frontend we need to upload the file to S3 and give the file path as an input to this field
   """
   profileUrl: String
-
-  """User Id"""
   id: String!
 }
 
-input CreateRoomInput {
-  """The unique roomName for the registering user."""
-  roomName: String
-  users: [UpdateUserInput!]!
+input CreateMessageInput {
+  """conversation text"""
+  message: String!
+  user: UpdateUserInput!
+  room: UpdateRoomInput!
 }
 
 input UpdateRoomInput {
@@ -146,4 +177,18 @@ input UpdateRoomInput {
   roomName: String
   users: [UpdateUserInput!]
   id: String!
+}
+
+input UpdateMessageInput {
+  """conversation text"""
+  message: String
+  user: UpdateUserInput
+  room: UpdateRoomInput
+  id: String!
+}
+
+input CreateRoomInput {
+  """The unique roomName for the registering user."""
+  roomName: String
+  users: [UpdateUserInput!]!
 }

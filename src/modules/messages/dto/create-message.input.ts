@@ -8,7 +8,7 @@ export class CreateMessageInput {
   message: string;
 
   @Field(() => UpdateUserInput)
-  user?: UpdateUserInput;
+  user: UpdateUserInput;
 
   @Field(() => UpdateRoomInput)
   room: UpdateRoomInput;

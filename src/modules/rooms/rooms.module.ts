@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { RoomsResolver } from './rooms.resolver';
 import { RoomsRepository } from './rooms.repository';
+import { UserRepository } from '../users/users.repository';
 
 @Module({
-  providers: [RoomsResolver, RoomsService, RoomsRepository],
+  providers: [RoomsResolver, RoomsService, RoomsRepository, UserRepository],
 })
 export class RoomsModule {}

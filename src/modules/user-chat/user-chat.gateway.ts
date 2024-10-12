@@ -11,8 +11,10 @@ import { Logger } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { MessagesService } from '../messages/messages.service';
 import { MyLogger } from 'src/logger/logger.service';
+import { Message } from '../messages/entities/message.entity';
+import { CreateMessageInput } from '../messages/dto/create-message.input';
 
-interface Message {
+interface MessageType {
   userId: string;
   roomId: string;
   message: string;
@@ -41,17 +43,12 @@ export class UserChatGateway {
   @SubscribeMessage('chat')
   async handleChatEvent(
     @MessageBody()
-    payload: Message,
+    payload: CreateMessageInput,
   ): Promise<Message> {
     Logger.log(JSON.stringify(payload));
-    this.server.to(payload.roomId).emit('chat', payload); // broadcast messages
-    const createMessageInput = {
-      message: payload.message,
-      room: { id: payload.roomId },
-      user: { id: payload.userId },
-    };
-    await this.messageService.createMessage(createMessageInput);
-    return payload;
+    this.server.to(payload.room.id).emit('chat', payload); // broadcast messages
+    const message = await this.messageService.createMessage(payload);
+    return message;
   }
 
   @SubscribeMessage('join_room')

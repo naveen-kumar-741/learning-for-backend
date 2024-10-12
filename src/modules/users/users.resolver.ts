@@ -6,6 +6,8 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/decorators/currentuser.decorator';
+import { GetAllUsersResponse } from './dto/user-response.output';
+import { GetPaginationInput } from '../common/pagination.input';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -24,9 +26,15 @@ export class UsersResolver {
     return user;
   }
 
-  @Query(() => [User], { name: 'getAllUser' })
-  getAllUser() {
-    return this.usersService.getAllUser();
+  @Query(() => GetAllUsersResponse, { name: 'getAllUser' })
+  async getAllUsers(
+    @Args('pagination') pagination: GetPaginationInput,
+  ): Promise<GetAllUsersResponse> {
+    return this.usersService.getAllUsers(
+      pagination?.searchParam,
+      pagination?.pageNo,
+      pagination?.perPage,
+    );
   }
 
   @Query(() => User, {

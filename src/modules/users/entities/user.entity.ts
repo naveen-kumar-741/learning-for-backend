@@ -67,7 +67,6 @@ export class User {
   messages: Message[];
 
   @Field(() => [Room], { nullable: true })
-  @JoinColumn({ name: 'room_id' })
   @ManyToMany(() => Room, (room) => room.users)
   rooms: Room[];
 

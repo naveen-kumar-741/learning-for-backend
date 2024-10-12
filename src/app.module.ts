@@ -9,6 +9,7 @@ import { CognitoModule } from './cognito/cognito.module';
 import { AuthModule } from './auth/auth.module';
 import { UserChatModule } from './modules/user-chat/user-chat.module';
 import { RoomsModule } from './modules/rooms/rooms.module';
+import { MessagesModule } from './modules/messages/messages.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { RoomsModule } from './modules/rooms/rooms.module';
     AuthModule,
     UserChatModule,
     RoomsModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

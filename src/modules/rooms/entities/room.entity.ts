@@ -28,7 +28,10 @@ export class Room extends BaseEntity {
   roomName: string;
 
   @Field(() => [User])
-  @ManyToMany(() => User, (user) => user.rooms)
+  @ManyToMany(() => User, (user) => user.rooms, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinTable({
     name: 'user_room_mappings',
     joinColumn: {

@@ -7,10 +7,15 @@ import {
 import { CreateRoomInput } from './dto/create-room.input';
 import { UpdateRoomInput } from './dto/update-room.input';
 import { RoomsRepository } from './rooms.repository';
+import { User } from '../users/entities/user.entity';
+import { UserRepository } from '../users/users.repository';
 
 @Injectable()
 export class RoomsService {
-  constructor(private readonly roomRepo: RoomsRepository) {}
+  constructor(
+    private readonly roomRepo: RoomsRepository,
+    private readonly userRepo: UserRepository,
+  ) {}
   async createRoom(createRoomInput: CreateRoomInput) {
     return this.roomRepo.createRecord(createRoomInput);
   }
@@ -19,10 +24,24 @@ export class RoomsService {
     return await this.roomRepo.findAll();
   }
 
+  async checkRoomAlreadyExist(senderId: string, recipientId: string) {
+    return await this.roomRepo.checkRoomAlreadyExist(senderId, recipientId);
+  }
+
+  async getAllOneOnOneRooms(user: User) {
+    const userData = await this.userRepo.getOneOnOneRoomsByUser(user.id);
+    return userData.rooms;
+  }
+
+  async getAllGroups(user: User) {
+    const userData = await this.userRepo.getGroupsByUser(user.id);
+    return userData.rooms;
+  }
+
   async getRoomById(id: string) {
     const roomData = await this.roomRepo.findOne({
       where: { id: id },
-      relations: ['users', 'messages'],
+      relations: ['users', 'messages', 'messages.user'],
     });
     if (!roomData) {
       Logger.error(`Message ----> ${'Room not Found'}`);

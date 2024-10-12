@@ -7,11 +7,14 @@ import {
 import { CreateMessageInput } from './dto/create-message.input';
 import { UpdateMessageInput } from './dto/update-message.input';
 import { MessagesRepository } from './messages.repository';
+import { Message } from './entities/message.entity';
 
 @Injectable()
 export class MessagesService {
   constructor(private readonly messageRepo: MessagesRepository) {}
-  async createMessage(createMessageInput: CreateMessageInput) {
+  async createMessage(
+    createMessageInput: CreateMessageInput,
+  ): Promise<Message> {
     return this.messageRepo.createRecord(createMessageInput);
   }
 
@@ -19,10 +22,24 @@ export class MessagesService {
     return await this.messageRepo.findAll();
   }
 
+  async getAllMessagesByRoomId(
+    id: string,
+    searchParam: string,
+    pageNo = 1,
+    perPage = 10,
+  ) {
+    return this.messageRepo.getAllMessagesByRoomId(
+      id,
+      searchParam,
+      pageNo,
+      perPage,
+    );
+  }
+
   async getMessageById(id: string) {
     const messageData = await this.messageRepo.findOne({
       where: { id: id },
-      relations: ['users', 'messages'],
+      relations: ['user', 'room'],
     });
     if (!messageData) {
       Logger.error(`Message ----> ${'Message not Found'}`);

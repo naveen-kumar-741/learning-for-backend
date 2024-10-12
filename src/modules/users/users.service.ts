@@ -51,8 +51,8 @@ export class UsersService {
     return userData;
   }
 
-  async getAllUser() {
-    return await this.userRepo.findAll();
+  async getAllUsers(searchParam: string, pageNo = 1, perPage = 10) {
+    return this.userRepo.getAllUsers(searchParam, pageNo, perPage);
   }
 
   async getUserById(id: string) {
@@ -82,10 +82,15 @@ export class UsersService {
   }
 
   async removeUser(id: string) {
-    const userData = await this.userRepo.findById(id);
+    const userData = await this.getUserById(id);
     if (!userData?.id) {
       Logger.error(`Message ----> ${USER_NOT_EXIST}`);
       throw new NotFoundException(USER_NOT_EXIST);
+    }
+
+    if (userData.rooms && userData.rooms.length > 0) {
+      userData.rooms = [];
+      await this.userRepo.save(userData);
     }
     const deleteUser = await this.userRepo.delete(id);
     if (!deleteUser.affected) {
