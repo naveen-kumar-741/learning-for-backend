@@ -4,6 +4,7 @@ import { User } from 'src/modules/users/entities/user.entity';
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -34,4 +35,12 @@ export class Message extends BaseEntity {
   })
   @JoinColumn({ name: 'room_id' })
   room: Room;
+
+  @Field({ nullable: true })
+  @CreateDateColumn({
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    name: 'created_at',
+  })
+  createdAt: Date;
 }

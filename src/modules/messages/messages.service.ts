@@ -19,7 +19,7 @@ export class MessagesService {
   }
 
   async getAllMessages() {
-    return await this.messageRepo.findAll();
+    return await this.messageRepo.findAll(null, ['room']);
   }
 
   async getAllMessagesByRoomId(
@@ -41,6 +41,15 @@ export class MessagesService {
       where: { id: id },
       relations: ['user', 'room'],
     });
+    if (!messageData) {
+      Logger.error(`Message ----> ${'Message not Found'}`);
+      throw new NotFoundException('Message not Found');
+    }
+    return messageData;
+  }
+
+  async getMessageForWebSocket(id: string) {
+    const messageData = await this.messageRepo.getMessageForWebSocket(id);
     if (!messageData) {
       Logger.error(`Message ----> ${'Message not Found'}`);
       throw new NotFoundException('Message not Found');

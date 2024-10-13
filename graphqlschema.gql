@@ -27,6 +27,7 @@ type Message {
   message: String!
   user: User!
   room: Room!
+  createdAt: DateTime
 }
 
 type Room {

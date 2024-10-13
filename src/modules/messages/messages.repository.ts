@@ -21,7 +21,8 @@ export class MessagesRepository extends BaseRepository<Message> {
   ): Promise<GetAllMessagesResponse> {
     let query = this.createQueryBuilder('message')
       .leftJoinAndSelect('message.user', 'user')
-      .leftJoinAndSelect('message.room', 'room', 'room.id = :roomId', {
+      .leftJoinAndSelect('message.room', 'room')
+      .where('room.id = :roomId', {
         roomId,
       });
 
@@ -39,5 +40,21 @@ export class MessagesRepository extends BaseRepository<Message> {
       .getManyAndCount();
 
     return { messages, totalCount };
+  }
+
+  async getMessageForWebSocket(id: string) {
+    const messageData = this.createQueryBuilder('message')
+      .where({ id })
+      .leftJoin('message.user', 'user')
+      .addSelect([
+        'user.userName',
+        'user.id',
+        'user.emailId',
+        'user.profileUrl',
+      ])
+      .leftJoin('message.room', 'room')
+      .addSelect('room.id')
+      .getOne();
+    return messageData;
   }
 }

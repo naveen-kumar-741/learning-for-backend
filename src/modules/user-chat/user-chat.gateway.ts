@@ -46,8 +46,9 @@ export class UserChatGateway {
     payload: CreateMessageInput,
   ): Promise<Message> {
     Logger.log(JSON.stringify(payload));
-    this.server.to(payload.room.id).emit('chat', payload); // broadcast messages
-    const message = await this.messageService.createMessage(payload);
+    let message = await this.messageService.createMessage(payload);
+    message = await this.messageService.getMessageForWebSocket(message.id);
+    this.server.to(payload.room.id).emit('chat', message); // broadcast messages
     return message;
   }
 
