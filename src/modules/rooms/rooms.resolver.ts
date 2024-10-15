@@ -7,6 +7,8 @@ import { CurrentUser } from 'src/auth/decorators/currentuser.decorator';
 import { User } from '../users/entities/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { GetPaginationInput } from '../common/pagination.input';
+import { GetAllGroupsResponse } from './dto/room-response.output';
 
 @Resolver(() => Room)
 export class RoomsResolver {
@@ -28,10 +30,19 @@ export class RoomsResolver {
     return this.roomsService.getAllOneOnOneRooms(user);
   }
 
-  @Query(() => [Room], { name: 'getAllGroups' })
+  @Query(() => GetAllGroupsResponse, { name: 'getAllGroups' })
   @UseGuards(JwtAuthGuard)
-  getAllGroups(@CurrentUser() user: User) {
-    return this.roomsService.getAllGroups(user);
+  async getAllGroups(
+    @CurrentUser() user: User,
+    @Args('pagination') pagination: GetPaginationInput,
+  ): Promise<GetAllGroupsResponse> {
+    let roomsData = await this.roomsService.getAllGroups(
+      user,
+      pagination?.searchParam,
+      pagination?.pageNo,
+      pagination?.perPage,
+    );
+    return roomsData;
   }
 
   @Query(() => [Room], {

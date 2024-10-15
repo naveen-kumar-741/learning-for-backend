@@ -24,8 +24,12 @@ export class Room extends BaseEntity {
   id: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, name: 'room_name', unique: true })
+  @Column({ nullable: true, name: 'room_name' })
   roomName: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true, name: 'room_icon_url' })
+  roomIconUrl: string;
 
   @Field(() => [User])
   @ManyToMany(() => User, (user) => user.rooms, {

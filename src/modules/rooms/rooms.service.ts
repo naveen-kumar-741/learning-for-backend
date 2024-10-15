@@ -12,10 +12,7 @@ import { UserRepository } from '../users/users.repository';
 
 @Injectable()
 export class RoomsService {
-  constructor(
-    private readonly roomRepo: RoomsRepository,
-    private readonly userRepo: UserRepository,
-  ) {}
+  constructor(private readonly roomRepo: RoomsRepository) {}
   async createRoom(createRoomInput: CreateRoomInput) {
     return this.roomRepo.createRecord(createRoomInput);
   }
@@ -29,13 +26,23 @@ export class RoomsService {
   }
 
   async getAllOneOnOneRooms(user: User) {
-    const userData = await this.userRepo.getOneOnOneRoomsByUser(user.id);
-    return userData.rooms;
+    const roomsData = await this.roomRepo.getOneOnOneRoomsByUser(user.id);
+    return roomsData;
   }
 
-  async getAllGroups(user: User) {
-    const userData = await this.userRepo.getGroupsByUser(user.id);
-    return userData.rooms;
+  async getAllGroups(
+    user: User,
+    searchParam: string,
+    pageNo = 1,
+    perPage = 10,
+  ) {
+    const roomsData = await this.roomRepo.getGroupsByUser(
+      user.id,
+      searchParam,
+      pageNo,
+      perPage,
+    );
+    return roomsData;
   }
 
   async getRoomById(id: string) {

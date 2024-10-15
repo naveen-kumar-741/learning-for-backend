@@ -20,23 +20,6 @@ export class UserRepository extends BaseRepository<User> {
       .orWhere('LOWER(user.emailId) = :emailId', { emailId: cognitoUserName })
       .getOne();
   }
-
-  async getOneOnOneRoomsByUser(id: string) {
-    return this.createQueryBuilder('user')
-      .where({ id })
-      .leftJoinAndSelect('user.rooms', 'rooms', 'rooms.roomName is  null')
-      .leftJoinAndSelect('rooms.users', 'room_users')
-      .getOne();
-  }
-
-  async getGroupsByUser(id: string) {
-    return this.createQueryBuilder('user')
-      .where({ id })
-      .leftJoinAndSelect('user.rooms', 'rooms', 'rooms.roomName is not null')
-      .leftJoinAndSelect('rooms.users', 'room_users')
-      .getOne();
-  }
-
   async getAllUsers(
     searchParam,
     pageNo,
