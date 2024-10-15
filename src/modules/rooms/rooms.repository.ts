@@ -16,14 +16,14 @@ export class RoomsRepository extends BaseRepository<Room> {
     recipientId: string,
   ): Promise<Room[]> {
     const roomData = await this.createQueryBuilder('room')
+      .innerJoin('room.users', 'user1', 'user1.id = :senderId', { senderId })
+      .innerJoin('room.users', 'user2', 'user2.id = :recipientId', {
+        recipientId,
+      })
       .where({ roomName: IsNull() })
-      .leftJoinAndSelect(
-        'room.users',
-        'users',
-        'users.id = :senderId or users.id = :recipientId',
-        { recipientId, senderId },
-      )
+      .leftJoinAndSelect('room.users', 'users') // Select all users in the room
       .getMany();
+
     return roomData;
   }
   async getOneOnOneRoomsByUser(id: string) {

@@ -18,7 +18,7 @@ export class RoomsService {
   }
 
   async getAllRooms() {
-    return await this.roomRepo.findAll();
+    return await this.roomRepo.findAll(undefined, ['users']);
   }
 
   async checkRoomAlreadyExist(senderId: string, recipientId: string) {
