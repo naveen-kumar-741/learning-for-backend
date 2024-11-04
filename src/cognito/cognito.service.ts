@@ -1,28 +1,39 @@
 import * as AWS from 'aws-sdk';
 
-import { Logger } from '@nestjs/common';
-import { config } from 'src/config/config';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
+@Injectable()
 export class CognitoService {
-  //   public static storeVal: StoreVal;
+  private cognitoIdentity: AWS.CognitoIdentityServiceProvider;
 
-  public static cognitoIdentity = new AWS.CognitoIdentityServiceProvider({
-    region: config.region,
-  });
+  constructor(private configService: ConfigService) {
+    const region = this.configService.get<string>('AWS_REGION');
+    const accessKeyId = this.configService.get<string>('AWS_ACCESS_KEY_ID');
+    const secretAccessKey = this.configService.get<string>(
+      'AWS_SECRET_ACCESS_KEY',
+    );
+    const poolId = this.configService.get<string>('AWS_POOL_ID');
 
-  public constructor() {
     AWS.config.update({
-      region: config.region,
+      accessKeyId,
+      secretAccessKey,
+      region,
+    });
+
+    this.cognitoIdentity = new AWS.CognitoIdentityServiceProvider({
+      region,
     });
   }
 
   public async adminConfirmSignUp(emailId: string) {
+    const poolId = this.configService.get<string>('AWS_POOL_ID');
     const params = {
-      UserPoolId: config.poolId,
+      UserPoolId: poolId,
       Username: emailId,
     };
     try {
-      await CognitoService.cognitoIdentity.adminConfirmSignUp(params).promise();
+      await this.cognitoIdentity.adminConfirmSignUp(params).promise();
     } catch (err) {
       Logger.error(
         `CognitoService --> adminConfirmSignUp ----- ${err.message}`,

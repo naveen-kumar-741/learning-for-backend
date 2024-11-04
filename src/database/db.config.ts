@@ -15,6 +15,7 @@ export default registerAs('typeOrmConfig', async () => {
     default: {
       type: 'postgres',
       host: data.host,
+      ssl: true, // added for connecting the render postgres DB
       port: parseInt(data.port),
       username: data.username,
       password: data.password,

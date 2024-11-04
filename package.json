@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "cross-env NODE_ENV=development && cross-env NODE_ENV=development npm run db:migrate && cross-env NODE_ENV=development node dist/main && export NODE_OPTIONS=--max-old-space-size=8192",
     "start:local": "cross-env NODE_ENV=development npm run db:migrate && cross-env NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
     "db:migrate": "npm run typeorm -- migration:run",
