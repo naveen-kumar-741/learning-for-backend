@@ -5,6 +5,6 @@ import { RoomsRepository } from './rooms.repository';
 import { UserRepository } from '../users/users.repository';
 
 @Module({
-  providers: [RoomsResolver, RoomsService, RoomsRepository, UserRepository],
+  providers: [RoomsResolver, RoomsService, RoomsRepository],
 })
 export class RoomsModule {}

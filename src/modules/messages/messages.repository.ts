@@ -27,12 +27,9 @@ export class MessagesRepository extends BaseRepository<Message> {
       });
 
     if (searchParam) {
-      query = query.where(
-        'user.emailId iLike :searchInput or user.userName iLike :searchInput',
-        {
-          searchInput: `%${searchParam}%`,
-        },
-      );
+      query = query.where('message.message iLike :searchInput ', {
+        searchInput: `%${searchParam}%`,
+      });
     }
     const [messages, totalCount] = await query
       .skip((pageNo - 1) * perPage)
